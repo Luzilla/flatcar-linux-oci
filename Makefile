@@ -13,20 +13,25 @@ IMAGE?=tillk/flatcar-linux
 SHELL:=/bin/bash
 
 _name:=flatcar
+_context:=rootfs
 
 .PHONY: build
-build: build/root.tar build/version.txt
+build: rootfs/root.tar build/version.txt
 	docker build \
 		--build-arg GITHUB_USER=$(GITHUB_USER) \
-		-t $(IMAGE):$(CHANNEL) \
-		-t $(IMAGE):$(CHANNEL)-$(ARCH) \
-		.
+		-t $(REGISTRY)$(IMAGE):$(VERSION) \
+		-t $(REGISTRY)$(IMAGE):$(CHANNEL) \
+		-t $(REGISTRY)$(IMAGE):$(CHANNEL)-$(ARCH) \
+		$(_context)
 
-build/root.tar:
-	wget -O build/root.tar.gz $(DOWNLOAD)/$(ROOT) && gunzip build/root.tar.gz
+rootfs/root.tar:
+	wget -O $(_context)/root.tar.gz $(DOWNLOAD)/$(ROOT) && gunzip $(_context)/root.tar.gz
 
 build/version.txt:
 	wget -O build/version.txt $(DOWNLOAD)/$(META)
+
+clean:
+	rm -f build/version.txt $(_context)/root.tar
 
 .PHONY: dev
 dev: build
@@ -39,7 +44,7 @@ dev: build
 		-p $(SSH_PORT):22 \
 		--rm \
 		--name $(_name) \
-		$(IMAGE):$(CHANNEL)
+		$(REGISTRY)$(IMAGE):$(CHANNEL)
 
 .PHONY: docker-shell
 docker-shell:

@@ -5,7 +5,7 @@ LABEL maintainer="till@lagged.biz"
 ARG GITHUB_USER
 
 USER root
-ADD build/root.tar /
+ADD root.tar /
 
 FROM base as clean-up
 
@@ -27,19 +27,13 @@ RUN systemctl mask \
     sshd.socket
 
 # poor man's ignition
-RUN mkdir -p /etc/docker/ \
-	&& ls -lah /etc/docker/
-ADD ignition/daemon.json /etc/docker/daemon.json
-ADD ignition/10-debug.conf /etc/systemd/system/systemd-networkd.service.d/10-debug.conf
-ADD ignition/poke-docker.service /etc/systemd/system/poke-docker.service
-ADD ignition/update.conf /etc/flatcar/update.conf
+ADD . .
 
 # ensure docker is running
 RUN systemctl enable poke-docker
 
 # configure & enable ssh
 ADD https://github.com/${GITHUB_USER}.keys /home/core/keys
-ADD ignition/sshd_config /etc/ssh/sshd_config
 RUN mkdir -p /home/core/.ssh/ \
     && cat /home/core/keys >> /home/core/.ssh/authorized_keys \
     && rm /home/core/keys \
