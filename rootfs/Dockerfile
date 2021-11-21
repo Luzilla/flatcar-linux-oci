@@ -1,6 +1,7 @@
 FROM scratch as base
 
 LABEL maintainer="till@lagged.biz"
+LABEL org.opencontainers.image.source=https://github.com/Luzilla/flatcar-linux-oci
 
 ARG GITHUB_USER
 
@@ -27,7 +28,7 @@ RUN systemctl mask \
     sshd.socket
 
 # poor man's ignition
-ADD . .
+ADD etc etc
 
 # ensure docker is running
 RUN systemctl enable poke-docker

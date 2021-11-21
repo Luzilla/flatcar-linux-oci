@@ -1,5 +1,6 @@
 CHANNEL?=alpha
 ARCH?=amd64
+VERSION?=dev
 DOWNLOAD?=https://$(CHANNEL).release.flatcar-linux.net/$(ARCH)-usr/current
 GITHUB_USER?=till
 FLATCAR_USER?=core
@@ -8,8 +9,8 @@ SSH_PORT?=2222
 ROOT:=flatcar-container.tar.gz
 META:=version.txt
 
-REGISTRY?=
-IMAGE?=tillk/flatcar-linux
+REGISTRY?=ghcr.io/
+IMAGE?=luzilla/flatcar
 SHELL:=/bin/bash
 
 _name:=flatcar

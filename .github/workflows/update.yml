@@ -1,0 +1,33 @@
+---
+name: update
+
+on:
+  pull_request
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ARCH: amd64
+      CHANNEL: stable
+    steps:
+      - uses: actions/checkout@v2
+      - run: make build/version.txt CHANNEL=${{ env.CHANNEL }}
+      - run: cat build/version.txt >> $GITHUB_ENV
+      - run: env|grep FLATCAR
+      - run: make rootfs/root.tar CHANNEL=${{ env.CHANNEL }}
+      - uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v2
+        with:
+          build-args: |
+            GITHUB_USER=till
+          context: rootfs/
+          push: true
+          tags: |
+            ghcr.io/luzilla/flatcar:${{ env.CHANNEL }}
+            ghcr.io/luzilla/flatcar:${{ env.CHANNEL }}-${{ env.ARCH }}
+            ghcr.io/luzilla/flatcar:${{ env.FLATCAR_VERSION }}
