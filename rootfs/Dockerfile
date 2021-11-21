@@ -1,6 +1,6 @@
 FROM scratch as base
 
-LABEL maintainer="till@lagged.biz"
+LABEL maintainer="till@php.net"
 LABEL org.opencontainers.image.source=https://github.com/Luzilla/flatcar-linux-oci
 
 ARG GITHUB_USER
@@ -33,13 +33,13 @@ ADD etc etc
 # ensure docker is running
 RUN systemctl enable poke-docker
 
-# configure & enable ssh
+# setup core user
 ADD https://github.com/${GITHUB_USER}.keys /home/core/keys
 RUN mkdir -p /home/core/.ssh/ \
-    && cat /home/core/keys >> /home/core/.ssh/authorized_keys \
-    && rm /home/core/keys \
+    && mv /home/core/keys /home/core/.ssh/authorized_keys \
     && chmod 0700 /home/core/.ssh/ \
-    && chown core:core /home/core/.ssh \
+    && chown -R core:core /home/core \
+    # configure and enable sshd
     && chown 0600 /etc/ssh/sshd_config \
     && systemctl enable sshd.service
 

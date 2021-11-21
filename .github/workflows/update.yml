@@ -31,3 +31,18 @@ jobs:
             ghcr.io/luzilla/flatcar:${{ env.CHANNEL }}
             ghcr.io/luzilla/flatcar:${{ env.CHANNEL }}-${{ env.ARCH }}
             ghcr.io/luzilla/flatcar:${{ env.FLATCAR_VERSION }}
+  test:
+    runs-on: ubuntu-latest
+    needs: build
+    services:
+      flatcar:
+        image: ghcr.io/luzilla/flatcar:stable
+        options: >-
+          --name flatcar-stable
+        ports:
+          - 2222:22
+    steps:
+      - run: pip install wait-for-it
+      - run: wait-for-it -s 127.0.0.1:2222
+      - run: docker exec flatcar-stable whoami
+      - run: docker exec flatcar-stable cat /etc/os-release
