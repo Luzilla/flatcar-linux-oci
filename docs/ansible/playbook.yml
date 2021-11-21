@@ -1,0 +1,14 @@
+---
+- hosts: all
+  connection: docker
+  gather_facts: false
+  become: false
+  tasks:
+    - name: "fetch /etc/os-release"
+      raw: cat /etc/os-release
+      register: _info
+    - name: "display /etc/os-release"
+      debug:
+        var: _info.stdout
+
+

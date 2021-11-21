@@ -3,11 +3,12 @@
 Enabled services:
 
  - dockerd
- - sshd (see [`rootfs/Dockerfile`](rootfs/Dockerfile))
+ - sshd (see [`../rootfs/Dockerfile`](rootfs/Dockerfile))
 
 
 Examples:
  - [Run Flatcar Linux with Docker](flatcar-in-docker/)
+ - [Use Ansible with the dockerized Flatcar](ansible/)
 
 
 ## Customization
